@@ -19,11 +19,11 @@ public struct WeatherClient {
     }
 }
 
-struct WeatherForecast: Decodable, Equatable {
+struct WeatherForecast: Codable, Equatable {
     var list: [DayWeather]
 }
 
-struct DayWeather: Decodable, Equatable {
+struct DayWeather: Codable, Equatable {
     init(main: DayWeather.MainWeather, weather: [DayWeather.Weather], dtTxt: Date) {
         self.main = main
         self.weather = weather
@@ -37,7 +37,7 @@ struct DayWeather: Decodable, Equatable {
         UUID().uuidString
     }
 
-    struct MainWeather: Decodable, Equatable {
+    struct MainWeather: Codable, Equatable {
         init(humidity: Double, temp: Double, tempMin: Double, tempMax: Double) {
             self.humidity = humidity
             self.temp = temp
@@ -51,7 +51,7 @@ struct DayWeather: Decodable, Equatable {
         var tempMax: Double
     }
 
-    struct Weather: Decodable, Equatable {
+    struct Weather: Codable, Equatable {
         init(id: Double, description: String) {
             self.id = id
             self.description = description

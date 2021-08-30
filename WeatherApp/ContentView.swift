@@ -8,59 +8,6 @@
 import SwiftUI
 import Combine
 
-// TODO: cache data
-
-public class AppViewModel: ObservableObject {
-    @Published var isConnected = true
-    @Published var errorMessage: String?
-    @Published var weather: (DayWeather?, WeatherForecast?)?
-    @Published var lastUpdated: Date?
-
-    var cancellables = Set<AnyCancellable>()
-
-    let weatherClient: WeatherClient
-    let pathMonitorClient: PathMonitorClient
-    
-    public init(
-        pathMonitorClient: PathMonitorClient,
-        weatherClient: WeatherClient
-    ) {
-        self.weatherClient = weatherClient
-        self.pathMonitorClient = pathMonitorClient
-        
-        self.pathMonitorClient.networkPathPublisher
-            .map { $0.status == .satisfied }
-            .removeDuplicates()
-            .sink(receiveValue: { [weak self] isConnected in
-                guard let self = self else { return }
-                self.isConnected = isConnected
-                if self.isConnected {
-                    self.refreshWeather()
-                }
-            }).store(in: &cancellables)
-    }
-    
-    func refreshWeather() {
-        self.weatherClient
-            .weather("London")
-            .sink(
-                receiveCompletion: { [weak self] completion in
-                    switch completion {
-                    case .failure(let error):
-                        print(error)
-                        // TODO: we can transform errors to more user friendly messages ...
-                        self?.errorMessage = error.localizedDescription
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: { [weak self] response in
-                    self?.weather = response
-                    self?.lastUpdated = Date()
-                }).store(in: &cancellables)
-    }
-}
-
 struct ForecastRow: View {
     var weather: DayWeather
 
@@ -181,7 +128,8 @@ struct ContentView_Previews: PreviewProvider {
         return ContentView(
             viewModel: AppViewModel(
                 pathMonitorClient: .satisfied,
-                weatherClient: .happyPath
+                weatherClient: .happyPath,
+                cacheClient: .happyPath
             )
         )
     }

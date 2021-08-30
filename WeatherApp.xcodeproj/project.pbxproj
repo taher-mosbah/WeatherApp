@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,6 +19,11 @@
 		6D9833A126DAC0B300353301 /* PathMonitorClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833A026DAC0B300353301 /* PathMonitorClientInterface.swift */; };
 		6D9833A326DAC0D900353301 /* PathMonitorClientMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833A226DAC0D900353301 /* PathMonitorClientMocks.swift */; };
 		6D9833A526DAC0F900353301 /* PathMonitorClientLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833A426DAC0F900353301 /* PathMonitorClientLive.swift */; };
+		6D9833B126DC990D00353301 /* Cache in Frameworks */ = {isa = PBXBuildFile; productRef = 6D9833B026DC990D00353301 /* Cache */; };
+		6D9833B426DC9C2600353301 /* CacheClientInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833B326DC9C2600353301 /* CacheClientInterface.swift */; };
+		6D9833B626DC9CCC00353301 /* MockCacheClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833B526DC9CCC00353301 /* MockCacheClient.swift */; };
+		6D9833B826DC9D8E00353301 /* CacheClientLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833B726DC9D8E00353301 /* CacheClientLive.swift */; };
+		6D9833BA26DCB22700353301 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833B926DCB22700353301 /* AppViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +62,10 @@
 		6D9833A026DAC0B300353301 /* PathMonitorClientInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathMonitorClientInterface.swift; sourceTree = "<group>"; };
 		6D9833A226DAC0D900353301 /* PathMonitorClientMocks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathMonitorClientMocks.swift; sourceTree = "<group>"; };
 		6D9833A426DAC0F900353301 /* PathMonitorClientLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PathMonitorClientLive.swift; sourceTree = "<group>"; };
+		6D9833B326DC9C2600353301 /* CacheClientInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheClientInterface.swift; sourceTree = "<group>"; };
+		6D9833B526DC9CCC00353301 /* MockCacheClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCacheClient.swift; sourceTree = "<group>"; };
+		6D9833B726DC9D8E00353301 /* CacheClientLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheClientLive.swift; sourceTree = "<group>"; };
+		6D9833B926DCB22700353301 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +73,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D9833B126DC990D00353301 /* Cache in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,11 +117,12 @@
 		6D98336C26DAB75700353301 /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
-				6D9833A626DC8F8900353301 /* DatabaseClient */,
+				6D9833B226DC9C1500353301 /* CacheClient */,
 				6D98339F26DAC0A200353301 /* PathMonitorClient */,
 				6D98339826DABA6B00353301 /* WeatherClient */,
 				6D98336D26DAB75700353301 /* WeatherAppApp.swift */,
 				6D98336F26DAB75700353301 /* ContentView.swift */,
+				6D9833B926DCB22700353301 /* AppViewModel.swift */,
 				6D98337126DAB75900353301 /* Assets.xcassets */,
 				6D98337626DAB75900353301 /* Info.plist */,
 				6D98337326DAB75900353301 /* Preview Content */,
@@ -165,11 +176,14 @@
 			path = PathMonitorClient;
 			sourceTree = "<group>";
 		};
-		6D9833A626DC8F8900353301 /* DatabaseClient */ = {
+		6D9833B226DC9C1500353301 /* CacheClient */ = {
 			isa = PBXGroup;
 			children = (
+				6D9833B326DC9C2600353301 /* CacheClientInterface.swift */,
+				6D9833B526DC9CCC00353301 /* MockCacheClient.swift */,
+				6D9833B726DC9D8E00353301 /* CacheClientLive.swift */,
 			);
-			path = DatabaseClient;
+			path = CacheClient;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -188,6 +202,9 @@
 			dependencies = (
 			);
 			name = WeatherApp;
+			packageProductDependencies = (
+				6D9833B026DC990D00353301 /* Cache */,
+			);
 			productName = WeatherApp;
 			productReference = 6D98336A26DAB75700353301 /* WeatherApp.app */;
 			productType = "com.apple.product-type.application";
@@ -259,6 +276,9 @@
 				Base,
 			);
 			mainGroup = 6D98336126DAB75700353301;
+			packageReferences = (
+				6D9833AF26DC990D00353301 /* XCRemoteSwiftPackageReference "Cache" */,
+			);
 			productRefGroup = 6D98336B26DAB75700353301 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -303,12 +323,16 @@
 			files = (
 				6D98337026DAB75700353301 /* ContentView.swift in Sources */,
 				6D98336E26DAB75700353301 /* WeatherAppApp.swift in Sources */,
+				6D9833BA26DCB22700353301 /* AppViewModel.swift in Sources */,
 				6D9833A526DAC0F900353301 /* PathMonitorClientLive.swift in Sources */,
+				6D9833B826DC9D8E00353301 /* CacheClientLive.swift in Sources */,
 				6D9833A326DAC0D900353301 /* PathMonitorClientMocks.swift in Sources */,
 				6D98339A26DABA7E00353301 /* WeatherClientInterface.swift in Sources */,
 				6D98339E26DABA9500353301 /* WeatherClientLive.swift in Sources */,
 				6D9833A126DAC0B300353301 /* PathMonitorClientInterface.swift in Sources */,
 				6D98339C26DABA8900353301 /* WeatherClientMocks.swift in Sources */,
+				6D9833B426DC9C2600353301 /* CacheClientInterface.swift in Sources */,
+				6D9833B626DC9CCC00353301 /* MockCacheClient.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -628,6 +652,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6D9833AF26DC990D00353301 /* XCRemoteSwiftPackageReference "Cache" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hyperoslo/Cache";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6D9833B026DC990D00353301 /* Cache */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6D9833AF26DC990D00353301 /* XCRemoteSwiftPackageReference "Cache" */;
+			productName = Cache;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6D98336226DAB75700353301 /* Project object */;
 }

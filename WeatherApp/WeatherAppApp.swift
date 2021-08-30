@@ -11,8 +11,11 @@ import SwiftUI
 struct WeatherAppApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView(viewModel: AppViewModel(pathMonitorClient: .live(queue: .main),
-                                                weatherClient: .live))
+            ContentView(viewModel: AppViewModel(
+                            pathMonitorClient: .live(queue: .main),
+                            weatherClient: .live,
+                            cacheClient: .live)
+            )
         }
     }
 }

@@ -32,4 +32,3 @@ extension WeatherClient {
                 .eraseToAnyPublisher()
         })
 }
-
