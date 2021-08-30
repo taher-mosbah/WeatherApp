@@ -34,7 +34,12 @@ struct DayWeather: Codable, Equatable {
     var weather: [Weather]
     var dtTxt: Date?
     var id: String {
-        UUID().uuidString
+        // We can think of a better unique id, maybe using UUID()
+        if let dtTxt = dtTxt {
+            return DateFormatter().string(from: dtTxt)
+        } else {
+            return "\(main.humidity)\(main.temp)\(main.tempMax)\(main.tempMin)"
+        }
     }
 
     struct MainWeather: Codable, Equatable {

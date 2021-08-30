@@ -24,6 +24,8 @@
 		6D9833B626DC9CCC00353301 /* MockCacheClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833B526DC9CCC00353301 /* MockCacheClient.swift */; };
 		6D9833B826DC9D8E00353301 /* CacheClientLive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833B726DC9D8E00353301 /* CacheClientLive.swift */; };
 		6D9833BA26DCB22700353301 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833B926DCB22700353301 /* AppViewModel.swift */; };
+		6D9833BC26DCB2C800353301 /* ModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833BB26DCB2C800353301 /* ModelTests.swift */; };
+		6D9833BE26DCB43900353301 /* ViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D9833BD26DCB43900353301 /* ViewModelTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -66,6 +68,8 @@
 		6D9833B526DC9CCC00353301 /* MockCacheClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCacheClient.swift; sourceTree = "<group>"; };
 		6D9833B726DC9D8E00353301 /* CacheClientLive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheClientLive.swift; sourceTree = "<group>"; };
 		6D9833B926DCB22700353301 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		6D9833BB26DCB2C800353301 /* ModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTests.swift; sourceTree = "<group>"; };
+		6D9833BD26DCB43900353301 /* ViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +147,8 @@
 			children = (
 				6D98337F26DAB75A00353301 /* WeatherAppTests.swift */,
 				6D98338126DAB75A00353301 /* Info.plist */,
+				6D9833BB26DCB2C800353301 /* ModelTests.swift */,
+				6D9833BD26DCB43900353301 /* ViewModelTests.swift */,
 			);
 			path = WeatherAppTests;
 			sourceTree = "<group>";
@@ -341,6 +347,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6D98338026DAB75A00353301 /* WeatherAppTests.swift in Sources */,
+				6D9833BC26DCB2C800353301 /* ModelTests.swift in Sources */,
+				6D9833BE26DCB43900353301 /* ViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

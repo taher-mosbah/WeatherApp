@@ -10,7 +10,7 @@ import Combine
 import Cache
 
 extension CacheClient {
-    static let dayStorage: Storage<String, DayWeather>? = {
+    private static let dayStorage: Storage<String, DayWeather>? = {
         let diskConfig = DiskConfig(name: "Floppy")
         let memoryConfig = MemoryConfig(expiry: .never, countLimit: 10, totalCostLimit: 10)
 
@@ -22,7 +22,7 @@ extension CacheClient {
         return storage
     }()
 
-    static let forecastStorage: Storage<String, WeatherForecast>? = {
+    private static let forecastStorage: Storage<String, WeatherForecast>? = {
         let diskConfig = DiskConfig(name: "Floppy")
         let memoryConfig = MemoryConfig(expiry: .never, countLimit: 10, totalCostLimit: 10)
 
