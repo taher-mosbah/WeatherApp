@@ -8,15 +8,16 @@
 import SwiftUI
 import Combine
 
+// TODO: cache data
 
 public class AppViewModel: ObservableObject {
     @Published var isConnected = true
-    @Published var weatherForecast: WeatherForecast?
-    @Published var dayWeather: DayWeather?
+    @Published var errorMessage: String?
+    @Published var weather: (DayWeather?, WeatherForecast?)?
+    @Published var lastUpdated: Date?
 
-    var weatherCancellables = Set<AnyCancellable>()
-    var pathUpdateCancellable: AnyCancellable?
-    
+    var cancellables = Set<AnyCancellable>()
+
     let weatherClient: WeatherClient
     let pathMonitorClient: PathMonitorClient
     
@@ -27,7 +28,7 @@ public class AppViewModel: ObservableObject {
         self.weatherClient = weatherClient
         self.pathMonitorClient = pathMonitorClient
         
-        self.pathUpdateCancellable = self.pathMonitorClient.networkPathPublisher
+        self.pathMonitorClient.networkPathPublisher
             .map { $0.status == .satisfied }
             .removeDuplicates()
             .sink(receiveValue: { [weak self] isConnected in
@@ -35,47 +36,91 @@ public class AppViewModel: ObservableObject {
                 self.isConnected = isConnected
                 if self.isConnected {
                     self.refreshWeather()
-                } else {
-                    self.weatherForecast = nil
                 }
-            })
+            }).store(in: &cancellables)
     }
     
     func refreshWeather() {
-        self.dayWeather = nil
-        
         self.weatherClient
             .weather("London")
             .sink(
-                receiveCompletion: { completion in
+                receiveCompletion: { [weak self] completion in
                     switch completion {
                     case .failure(let error):
                         print(error)
+                        // TODO: we can transform errors to more user friendly messages ...
+                        self?.errorMessage = error.localizedDescription
                     case .finished:
                         break
                     }
                 },
                 receiveValue: { [weak self] response in
-                    self?.dayWeather = response
-                }).store(in: &weatherCancellables)
+                    self?.weather = response
+                    self?.lastUpdated = Date()
+                }).store(in: &cancellables)
+    }
+}
 
-        self.weatherForecast = nil
+struct ForecastRow: View {
+    var weather: DayWeather
 
-        self.weatherClient
-            .forecast("London")
-            .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        print(error)
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: { [weak self] response in
-                    self?.weatherForecast = response
-                }).store(in: &weatherCancellables)
+    let dayOfWeekAndHourFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "EEEE 'at' HH 'hours'"
+        return formatter
+    }()
 
+    var body: some View {
+        Text(dayOfWeekAndHourFormatter.string(from: weather.dtTxt ?? Date()).capitalized)
+            .font(.title)
+        if let wetherDetails = weather.weather.first {
+            Text("Description: \(wetherDetails.description)")
+                .bold()
+        }
+        Text("Average temp: \(weather.main.temp, specifier: "%.1f")°C")
+            .bold()
+        Text("Max temp: \(weather.main.tempMax, specifier: "%.1f")°C")
+        Text("Min temp: \(weather.main.tempMin, specifier: "%.1f")°C")
+    }
+}
+
+struct TodayRow: View {
+    var dayWeather: DayWeather
+    var lastUpdated: Date?
+
+    let lastUpdatedFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
+    }()
+
+    var body: some View {
+        if let wetherDetails = dayWeather.weather.first {
+            Text("Description: \(wetherDetails.description.capitalized)")
+                .bold()
+        }
+        Text("Current temp: \(dayWeather.main.temp, specifier: "%.1f")°C")
+            .bold()
+        Text("Max temp: \(dayWeather.main.tempMax, specifier: "%.1f")°C")
+        Text("Min temp: \(dayWeather.main.tempMin, specifier: "%.1f")°C")
+        Text("Current humidity: \(dayWeather.main.humidity, specifier: "%.0f")%")
+        if let lastUpdated = lastUpdated {
+            Text("Last updated: \(lastUpdatedFormatter.string(from: lastUpdated))")
+                .fontWeight(.light)
+        }
+    }
+}
+
+struct Toast: View {
+    var text: String
+    var body: some View {
+        HStack {
+            Image(systemName: "exclamationmark.octagon.fill")
+            Text(text)
+        }
+        .foregroundColor(.white)
+        .padding()
+        .background(Color.orange)
     }
 }
 
@@ -85,55 +130,45 @@ public struct ContentView: View {
     public init(viewModel: AppViewModel) {
         self.viewModel = viewModel
     }
-    
+
     public var body: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
-                ZStack(alignment: .topLeading) {
-                    if let dayWeather = self.viewModel.dayWeather {
-                        VStack(alignment: .leading) {
-                            Text("Today")
-                                .font(.headline)
-                            Text("Current temp: \(dayWeather.main.temp, specifier: "%.1f")°C")
-                                .italic()
-                            Text("Current humidity: \(dayWeather.main.humidity, specifier: "%.0f")%")
-                                .italic()
-                            Text("Max temp: \(dayWeather.main.tempMax, specifier: "%.1f")°C")
-                                .underline()
-                            Text("Min temp: \(dayWeather.main.tempMin, specifier: "%.1f")°C")
-                                .underline()
-                        }
-                    }
-                }
                 ZStack(alignment: .bottomTrailing) {
-                    if let results = self.viewModel.weatherForecast {
+                    if let results = self.viewModel.weather?.1 {
                         List {
-                            ForEach(results.list, id: \.id) { weather in
-                                VStack(alignment: .leading) {
-                                    Text(dayOfWeekFormatter.string(from: weather.dtTxt ?? Date()).capitalized)
-                                        .font(.title)
-
-                                    Text("Current temp: \(weather.main.temp, specifier: "%.1f")°C")
-                                        .bold()
-                                    Text("Current humidity: \(weather.main.humidity, specifier: "%.0f")%")
-                                        .bold()
-                                    Text("Max temp: \(weather.main.tempMax, specifier: "%.1f")°C")
-                                    Text("Min temp: \(weather.main.tempMin, specifier: "%.1f")°C")
+                            Section(header: Text("Today")) {
+                                if let dayWeather = self.viewModel.weather?.0 {
+                                    TodayRow(dayWeather: dayWeather, lastUpdated: self.viewModel.lastUpdated)
                                 }
                             }
+                            Section(header: Text("5 days forecast")) {
+                                ForEach(results.list, id: \.id) { weather in
+                                    VStack(alignment: .leading) {
+                                        ForecastRow(weather: weather)
+                                    }
+                                }
+                            }
+                        }.listStyle(GroupedListStyle())
+                        Button(
+                            action: { self.viewModel.refreshWeather() }
+                        ) {
+                            Image(systemName: "arrow.clockwise")
+                                .foregroundColor(.white)
+                                .frame(width: 60, height: 60)
                         }
+                        .background(Color.black)
+                        .clipShape(Circle())
+                        .padding()
+                    } else {
+                        ProgressView()
                     }
                 }
-                
+                if let errorMessage = self.viewModel.errorMessage {
+                    Toast(text: "Error : \(errorMessage)")
+                }
                 if !self.viewModel.isConnected {
-                    HStack {
-                        Image(systemName: "exclamationmark.octagon.fill")
-                        
-                        Text("Not connected to internet")
-                    }
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.red)
+                    Toast(text: "Not connected to internet")
                 }
             }
             .navigationBarTitle("London Weather")
@@ -151,9 +186,3 @@ struct ContentView_Previews: PreviewProvider {
         )
     }
 }
-
-let dayOfWeekFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "EEEE"
-    return formatter
-}()

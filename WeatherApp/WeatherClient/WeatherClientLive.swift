@@ -13,30 +13,30 @@ extension WeatherClient {
     private static var key = "bb53995398d058363d372de8ab356e14"
     public static let live = Self(
         weather: { city in
-            URLSession.shared.dataTaskPublisher(for: URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=\(key)&units=metric")!)
-                .tryMap() { element -> Data in
-                    guard let httpResponse = element.response as? HTTPURLResponse,
-                          httpResponse.statusCode == 200 else {
-                        throw URLError(.badServerResponse)
+            Publishers.CombineLatest(
+                URLSession.shared.dataTaskPublisher(for: URL(string: "https://api.openweathermap.org/data/2.5/weather?q=\(city)&appid=\(key)&units=metric")!)
+                    .tryMap() { element -> Data in
+                        guard let httpResponse = element.response as? HTTPURLResponse,
+                              httpResponse.statusCode == 200 else {
+                            throw URLError(.badServerResponse)
+                        }
+                        return element.data
                     }
-                    return element.data
-                }
-                .decode(type: DayWeather.self, decoder: weatherJsonDecoder)
-                .receive(on: DispatchQueue.main)
-                .eraseToAnyPublisher()
-        },
-        forecast: { city in
-            URLSession.shared.dataTaskPublisher(for: URL(string: "https://api.openweathermap.org/data/2.5/forecast?q=\(city)&appid=\(key)&units=metric")!)
-                .tryMap() { element -> Data in
-                    guard let httpResponse = element.response as? HTTPURLResponse,
-                          httpResponse.statusCode == 200 else {
-                        throw URLError(.badServerResponse)
+                    .decode(type: DayWeather.self, decoder: weatherJsonDecoder)
+                    .receive(on: DispatchQueue.main)
+                    .eraseToAnyPublisher(),
+                URLSession.shared.dataTaskPublisher(for: URL(string: "https://api.openweathermap.org/data/2.5/forecast?q=\(city)&appid=\(key)&units=metric")!)
+                    .tryMap() { element -> Data in
+                        guard let httpResponse = element.response as? HTTPURLResponse,
+                              httpResponse.statusCode == 200 else {
+                            throw URLError(.badServerResponse)
+                        }
+                        return element.data
                     }
-                    return element.data
-                }
-                .decode(type: WeatherForecast.self, decoder: weatherJsonDecoder)
-                .receive(on: DispatchQueue.main)
-                .eraseToAnyPublisher()
+                    .decode(type: WeatherForecast.self, decoder: weatherJsonDecoder)
+                    .receive(on: DispatchQueue.main)
+                    .eraseToAnyPublisher()
+            ).eraseToAnyPublisher()
         })
 }
 

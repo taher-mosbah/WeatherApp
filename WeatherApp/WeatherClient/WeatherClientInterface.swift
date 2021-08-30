@@ -10,15 +10,12 @@ import Combine
 
 /// A client for fetching weather data.
 public struct WeatherClient {
-    var weather: (String) -> AnyPublisher<DayWeather, Error>
-    var forecast: (String) -> AnyPublisher<WeatherForecast, Error>
+    var weather: (String) -> AnyPublisher<(DayWeather, WeatherForecast), Error>
 
     init(
-        weather: @escaping (String) -> AnyPublisher<DayWeather, Error>,
-        forecast: @escaping (String) -> AnyPublisher<WeatherForecast, Error>
+        weather: @escaping (String) -> AnyPublisher<(DayWeather, WeatherForecast), Error>
     ) {
         self.weather = weather
-        self.forecast = forecast
     }
 }
 
@@ -37,7 +34,7 @@ struct DayWeather: Decodable, Equatable {
     var weather: [Weather]
     var dtTxt: Date?
     var id: String {
-        "\(weather.first!.id)" // TODO
+        UUID().uuidString
     }
 
     struct MainWeather: Decodable, Equatable {
@@ -64,5 +61,3 @@ struct DayWeather: Decodable, Equatable {
         var description: String
     }
 }
-
-// TODO: Use a flat object

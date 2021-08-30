@@ -107,6 +107,7 @@
 		6D98336C26DAB75700353301 /* WeatherApp */ = {
 			isa = PBXGroup;
 			children = (
+				6D9833A626DC8F8900353301 /* DatabaseClient */,
 				6D98339F26DAC0A200353301 /* PathMonitorClient */,
 				6D98339826DABA6B00353301 /* WeatherClient */,
 				6D98336D26DAB75700353301 /* WeatherAppApp.swift */,
@@ -162,6 +163,13 @@
 				6D9833A426DAC0F900353301 /* PathMonitorClientLive.swift */,
 			);
 			path = PathMonitorClient;
+			sourceTree = "<group>";
+		};
+		6D9833A626DC8F8900353301 /* DatabaseClient */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = DatabaseClient;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
